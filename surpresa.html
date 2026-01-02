@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Surpresa</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="surpresa-wrap">
+    <div class="stage" id="stage">
+      <div class="photo-center" id="photoCenter">
+        <!-- Coloque sua foto em assets/photo.jpg para substituir o placeholder -->
+        <img id="userPhoto" src="assets/photo.jpg" alt="Sua foto aqui">
+      </div>
+    
+    </div>
+  </div>
+
+  <script>
+    // Carrega foto localmente e usa fallback via onerror (mais compatível com file://)
+    const userPhoto = document.getElementById('userPhoto');
+    userPhoto.src = 'assets/photo.jpg';
+    userPhoto.onerror = () => { userPhoto.src = 'assets/placeholder.svg'; };
+
+    // Gera decorações fofas e animadas (corações, estrelas, confetes, bolhas)
+    const stage = document.getElementById('stage');
+    const decoCount = 32;
+
+    // adiciona frase central fofa
+    const message = document.createElement('div');
+    message.className = 'message';
+    message.innerHTML = 'Você clicou! <span class="emoji">✨💖</span>';
+    stage.appendChild(message);
+
+    function makeSVGData(type){
+      if(type === 'heart'){
+        return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 90'><path fill='%23ff6fa8' d='M50 78s-26-16-36-28C2 36 18 18 36 28c6 4 10 10 14 12 4-2 8-8 14-12 18-10 34 8 22 22-10 12-36 28-36 28z'/></svg>";
+      }
+      if(type === 'star'){
+        return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon fill='%23ffd24d' points='50,6 61,39 98,39 67,59 78,92 50,72 22,92 33,59 2,39 39,39'/></svg>";
+      }
+      if(type === 'bubble'){
+        return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='36' fill='%23fff1f8' stroke='%23ffd6e8' stroke-width='6'/></svg>";
+      }
+      // confete small rectangle
+      return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='14' height='8' rx='2' fill='%23ff9bd1'/></svg>";
+    }
+
+    for(let i=0;i<decoCount;i++){
+      const types = ['heart','star','bubble','confetti'];
+      const type = types[Math.floor(Math.random()*types.length)];
+      const d = document.createElement('div');
+      d.className = 'decor ' + type;
+      if(Math.random() > 0.85) d.classList.add('large');
+      else if(Math.random() > 0.5) d.classList.add('small');
+
+      const img = document.createElement('img');
+      img.src = makeSVGData(type);
+      d.appendChild(img);
+
+      // posição radial com variação, espalhando mais para bordas
+      const angle = Math.random()*Math.PI*2;
+      const radius = 20 + Math.random()*52;
+      const cx = 50 + Math.cos(angle)*radius;
+      const cy = 50 + Math.sin(angle)*radius;
+      d.style.left = cx + '%';
+      d.style.top = cy + '%';
+
+      // animações variadas (mais rápidas)
+      const dur = (1.6 + Math.random()*1.4).toFixed(2) + 's';
+      const delay = (-Math.random()*2).toFixed(2) + 's';
+      d.style.animationDuration = dur;
+      d.style.animationDelay = delay;
+
+      // alterna entre floatY e floatX (mais rápidas), aplica pop curto na entrada
+      if(Math.random() > 0.5) d.style.animationName = 'floatY';
+      else d.style.animationName = 'floatX';
+
+      // aplica pop no início (mais sutil e rápido)
+      img.style.animation = 'pop 0.35s ease-in-out';
+
+      // rotação lenta
+      d.style.transition = 'transform 0.6s ease-out';
+
+      stage.appendChild(d);
+    }
+  </script>
+</body>
+</html>
